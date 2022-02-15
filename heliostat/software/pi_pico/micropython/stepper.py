@@ -8,35 +8,100 @@ class stepper:
         self.coil_C = machine.Pin(C, machine.Pin.OUT) # pin that drives motor coil C
         self.coil_D = machine.Pin(D, machine.Pin.OUT) # pin that drives motor coil D
         self.actual = 0 # actual position
-        self.target = 0 # taregt position
+        self.target = 0 # target position
         self.state = 0  # current active state/ phase
         self.stop_A = machine.Pin(stop_A, machine.Pin.IN)  # start end stop switch
         self.stop_B = machine.Pin(stop_B, machine.Pin.IN)  # end end stop switch
         self.total_step_range = 0;  # number of steps between start end stop, and end end stop
         
         # set coil A high
+        self.set_state_0()
+        
+        
+    def set_state_0(self):
         self.coil_A.value(1)
+        self.coil_B.value(0)
+        self.coil_C.value(0)
+        self.coil_D.value(0)
+        self.state = 0
+        
+        
+    def set_state_1(self):
+        self.coil_A.value(1)
+        self.coil_B.value(1)
+        self.coil_C.value(0)
+        self.coil_D.value(0)
+        self.state = 1
+        
+        
+    def set_state_2(self):
+        self.coil_A.value(0)
+        self.coil_B.value(1)
+        self.coil_C.value(0)
+        self.coil_D.value(0)
+        self.state = 2
+        
+        
+    def set_state_3(self):
+        self.coil_A.value(0)
+        self.coil_B.value(1)
+        self.coil_C.value(1)
+        self.coil_D.value(0)
+        self.state = 3
+        
+        
+    def set_state_4(self):
+        self.coil_A.value(0)
+        self.coil_B.value(0)
+        self.coil_C.value(1)
+        self.coil_D.value(0)
+        self.state = 4
+        
+        
+    def set_state_5(self):
+        self.coil_A.value(0)
+        self.coil_B.value(0)
+        self.coil_C.value(1)
+        self.coil_D.value(1)
+        self.state = 5
+        
+        
+    def set_state_6(self):
+        self.coil_A.value(0)
+        self.coil_B.value(0)
+        self.coil_C.value(0)
+        self.coil_D.value(1)
+        self.state = 6
+        
+        
+    def set_state_7(self):
+        self.coil_A.value(1)
+        self.coil_B.value(0)
+        self.coil_C.value(0)
+        self.coil_D.value(1)
+        self.state = 7
+        
         
     def step_forward(self):
         if self.stop_B.value() != 1:
             # not against end stop
             if self.state == 0:
-                self.coil_A.value(0)
-                self.coil_B.value(1)
-                self.state = 1
+                self.set_state_1()
             elif self.state == 1:
-                self.coil_B.value(0)
-                self.coil_C.value(1)
-                self.state = 2
+                self.set_state_2()
             elif self.state == 2:
-                self.coil_C.value(0)
-                self.coil_D.value(1)
-                self.state = 3
+                self.set_state_3()
             elif self.state == 3:
-                self.coil_D.value(0)
-                self.coil_A.value(1)
-                self.state = 0
-            
+                self.set_state_4()
+            elif self.state == 4:
+                self.set_state_5()
+            elif self.state == 5:
+                self.set_state_6()
+            elif self.state == 6:
+                self.set_state_7()
+            elif self.state == 7:
+                self.set_state_0()
+                
             self.actual += 1
         
     
@@ -44,21 +109,21 @@ class stepper:
         if self.stop_A.value() != 1:
             # not against end stop
             if self.state == 0:
-                self.coil_A.value(0)
-                self.coil_D.value(1)
-                self.state = 3
+                self.set_state_7()
             elif self.state == 1:
-                self.coil_B.value(0)
-                self.coil_A.value(1)
-                self.state = 0
+                self.set_state_0()
             elif self.state == 2:
-                self.coil_C.value(0)
-                self.coil_B.value(1)
-                self.state = 1
+                self.set_state_1()
             elif self.state == 3:
-                self.coil_D.value(0)
-                self.coil_C.value(1)
-                self.state = 2
+                self.set_state_2()
+            elif self.state == 4:
+                self.set_state_3()
+            elif self.state == 5:
+                self.set_state_4()
+            elif self.state == 6:
+                self.set_state_5()
+            elif self.state == 7:
+                self.set_state_6()
             
             self.actual -= 1
         
