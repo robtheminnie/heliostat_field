@@ -2,14 +2,44 @@ import machine
 import utime
 
 
+# class to define instruciton IDs, used like a enumeration (bluh!)
 class instruction_ID:
     def __init__(self):
-    self.none = 0
-    self.get_ID = 1
-    self.auto_home = 2
-    self.find_end_points = 3
+        self.ndef = 0
+        self.get_ID = 1
+        self.auto_home = 2
+        self.find_end_points = 3
 
 instruction_ID = instruction_ID()
+
+
+# class to define uart message structure
+class uart_message:
+    def __init__(self):
+        self.source = bytearray([0])
+        self.destination = bytearray([0])
+        self.instruction_ID = bytearray([0])
+        self.data = bytearray([0, 0])
+        self.raw = bytearray([0, 0, 0, 0, 0])
+    #end def
+        
+    def struct_to_raw(self):
+        # convert structured data to raw byte array
+        self.raw = self.source + self.destination + self.inctruction_ID + self.data
+    #end def
+        
+    def raw_to_struct(self):
+        # convert raw data to structured data
+        self.source = self.raw[0]
+        self.destination = self.raw[1]
+        self.instruction_ID = self.raw[2]
+        self.data = self.raw[3:5]
+    #end def
+        
+#end class
+     
+uart_message = uart_message()
+        
 
 # When data is transmitted from master camera down the chain, the master sets the source as 0, and the destination to the desired slave ID.
 # Each slave decrements the destination ID.
@@ -24,10 +54,6 @@ class uart_interface:
         # init uart ports
         self.uart_from_master = machine.UART(0, baudrate=19200)
         self.uart_to_slaves = machine.UART(1, baudrate=19200)
-        self.rx_data_from_master = bytearray()
-        self.rx_data_from_slaves = bytearray()
-        self.tx_data_to_master = bytearray()
-        self.tx_data_to_slaves = bytearray()
         self.led = machine.Pin(25, machine.Pin.OUT)
     # end def
         
@@ -48,38 +74,40 @@ class uart_interface:
                 # buffer is correct length
                 
                 # copy data ready to transmit onwards
-                self.rx_data_from_master = temp_buffer
+                uart_message.raw = temp_buffer
+                
+                uart_message.raw_to_struct()
                 
                 # decrement destination ID
-                self.rx_data_from_master[1] -= 1
+                uart_message.destination_ID -= 1
                 
                 print("data from master")
-                print(self.rx_data_from_master)
+                print(uart_message)
                 
                 
-                if self.rx_data_from_master[1] == 0:
+                if uart_message.destination == 0:
                     # destination ID is 0, this must be for me!
                     print("this is for me")
                     self.led.toggle()
-                    return self.rx_data_from_master[0], self.rx_data_from_master[2]
+                    return uart_message
                 else:
                     # not for me
                     
                     # check if instruction is a get ID
-                    if self.rx_data_from_master[2] == instruction_ID.get_ID:
+                    if uart_message.instruction_ID == instruction_ID.get_ID:
                         # it is, increment destination by 1, this is my ID, then forward to next slave
-                        self.rx_data_from_master[1] += 1
-                        self.myID = self.rx_data_from_master[1]
+                        uart_message.destination += 1
+                        self.myID = uart_message.destination
                     #end if
                         
                     # this is not for me, pass it on
                     print("forward from master")
-                    self.tx_data_to_slaves = self.rx_data_from_master
-                    self.uart_to_slaves.write(self.tx_data_to_slaves)
+                    uart_message.struct_to_raw()
+                    self.uart_to_slaves.write(uart_message.raw)
                 #end if
             
     
-        # check if any data form slaves
+        # check if any data from slaves
         if self.uart_to_slaves.any() > 0:
             temp_buffer = bytearray()
             
@@ -91,24 +119,28 @@ class uart_interface:
             # check buffer length is correct
             if len(temp_buffer) == 5:
                 # copy buffer ready to transmit onwards
-                self.rx_data_from_slaves = temp_buffer
+                uart_message.raw = temp_buffer
+                uart_message.raw_to_struct()
                 
                 print("data from slave")
-                print(self.rx_data_from_slaves)
+                print(uart_message)
                 
             #end if
                 
                 # data always heading to master camera, increment source ID, then pass it on
-                self.rx_data_from_slaves[0] += 1
+                uart_message.source += 1
                 
                 print("forward to master")
                 
-                # copy and send data
-                self.tx_data_to_master = self.rx_data_from_slaves
-                self.uart_from_master.write(self.tx_data_to_master)
+                # pack and send data
+                uart_message.struct_to_raw
+                self.uart_from_master.write(uart_message.raw)
 
             #end if
         #end if
                 
         return 0, 0
+    
     #end def
+    
+#end class

@@ -13,7 +13,7 @@ class step_state:
 step_state = step_state()
         
 class stepper:
-    def __init__(self, A, B, C, D, stop_A, stop_B):
+    def __init__(self, A, B, C, D, min_end_stop, max_end_stop):
         # init class
         
         # init all coil pins
@@ -27,8 +27,8 @@ class stepper:
         self.target = 0 # target position
         
         # init end stop pins
-        self.stop_A = machine.Pin(stop_A, machine.Pin.IN)  # start end stop switch
-        self.stop_B = machine.Pin(stop_B, machine.Pin.IN)  # end end stop switch
+        self.min_stop = machine.Pin(min_end_stop, machine.Pin.IN)  # start end stop switch
+        self.max_stop = machine.Pin(max_end_stop, machine.Pin.IN)  # end end stop switch
         
         # init total step range
         self.total_step_range = 0;  # number of steps between start end stop, and end end stop
@@ -123,7 +123,7 @@ class stepper:
         
     def step_forward(self):
         # step forward only in end stop not hit
-        if self.stop_B.value() != 1:
+        if self.max_stop.value() != 1:
             # not against end stop
             if self.state == 0:
                 self.set_state_1()
@@ -154,7 +154,7 @@ class stepper:
     
     def step_backward(self):
         # step backward only if end stop not hit
-        if self.stop_A.value() != 1:
+        if self.min_stop.value() != 1:
             # not against end stop
             if self.state == 0:
                 self.set_state_7()

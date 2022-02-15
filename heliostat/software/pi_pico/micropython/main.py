@@ -32,7 +32,7 @@ def main():
         pan_stepper.increment_to_target()
         tilt_stepper.increment_to_target()
         
-        instruction_source, instruction = uart_interface.check_for_data()
+        message = uart_interface.check_for_data()
         
         print(instruction_source)
         print(instruction)
