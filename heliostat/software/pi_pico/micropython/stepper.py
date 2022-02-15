@@ -206,6 +206,9 @@ class stepper:
         # end stop hit, store range
         self.total_step_range = self.actual
         
+        # return to home position
+        self.auto_home()
+        
         
         
             
