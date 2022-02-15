@@ -3,6 +3,8 @@ import machine
 import stepper
 import uart
 
+
+    
 def main():
     
     print("init steppers")
@@ -17,7 +19,8 @@ def main():
     
     instruction_source = 0
     instruction = 0
-    
+
+
     while True:
         utime.sleep(0.1)
         
@@ -28,6 +31,10 @@ def main():
         tilt_stepper.increment_to_target()
         
         instruction_source, instruction = uart_interface.check_for_data()
-    
+        
+        print(instruction_source)
+        print(instruction)
+
+
 if __name__ == "__main__":
     main()
