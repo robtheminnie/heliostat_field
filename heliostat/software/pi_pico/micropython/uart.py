@@ -3,11 +3,13 @@ import utime
 
 
 class instruction_ID:
-    none = 0
-    get_ID = 1
-    auto_home = 2
-    find_end_points = 3
-    
+    def __init__(self):
+    self.none = 0
+    self.get_ID = 1
+    self.auto_home = 2
+    self.find_end_points = 3
+
+instruction_ID = instruction_ID()
     
 
 class uart_interface:
