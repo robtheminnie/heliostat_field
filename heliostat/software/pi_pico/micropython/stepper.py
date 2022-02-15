@@ -1,23 +1,52 @@
 import machine
 import utime
 
+class step_state:
+    def __init__(self):
+        self.step_successful = 0
+        self.target_hit = 1
+        self.min_stop_hit = 2
+        self.max_stop_hit = 3
+        
+
+step_state = step_state()
+        
 class stepper:
     def __init__(self, A, B, C, D, stop_A, stop_B):
+        # init class
+        
+        # init all coil pins
         self.coil_A = machine.Pin(A, machine.Pin.OUT) # pin that drives motor coil A
         self.coil_B = machine.Pin(B, machine.Pin.OUT) # pin that drives motor coil B
         self.coil_C = machine.Pin(C, machine.Pin.OUT) # pin that drives motor coil C
         self.coil_D = machine.Pin(D, machine.Pin.OUT) # pin that drives motor coil D
+        
+        # init target and actual position
         self.actual = 0 # actual position
         self.target = 0 # target position
-        self.state = 0  # current active state/ phase
+        
+        # init end stop pins
         self.stop_A = machine.Pin(stop_A, machine.Pin.IN)  # start end stop switch
         self.stop_B = machine.Pin(stop_B, machine.Pin.IN)  # end end stop switch
+        
+        # init total step range
         self.total_step_range = 0;  # number of steps between start end stop, and end end stop
         
-        # set coil A high
+        # set current state
+        self.state = 0  # current active state/ phase
         self.set_state_0()
         
         
+# states:
+    # 0, A
+    # 1, A+B
+    # 2, B
+    # 3, B+C
+    # 4, C
+    # 5, C+D
+    # 6, D
+    # 7, D+A
+    
     def set_state_0(self):
         self.coil_A.value(1)
         self.coil_B.value(0)
@@ -83,6 +112,7 @@ class stepper:
         
         
     def step_forward(self):
+        # step forward only in end stop not hit
         if self.stop_B.value() != 1:
             # not against end stop
             if self.state == 0:
@@ -103,9 +133,14 @@ class stepper:
                 self.set_state_0()
                 
             self.actual += 1
+            
+            return step_state.step_successful # step complete
+        else:
+            return step_state.max_stop_hit # step not complete, end stop hit
         
     
     def step_backward(self):
+        # step backward only if end stop not hit
         if self.stop_A.value() != 1:
             # not against end stop
             if self.state == 0:
@@ -126,27 +161,37 @@ class stepper:
                 self.set_state_6()
             
             self.actual -= 1
+            
+            return step_state.step_successful # step complete
+        else:
+            return step_state.min_stop_hit # step not complete, end stop hit
         
         
     def move_to_target(self):
-        # move to target will move to target in one call
-        while self.actual != self.target:
+        # move to target in one call
+        result = step_state.step_successful
+        while ((self.actual != self.target) and (result == step_state.step_successful)):
             if self.actual < self.target:
-                self.step_forward()
+                result = self.step_forward()
                 utime.sleep(0.01)
         
             if self.actual > self.target:
-                self.step_backward()
+                result = self.step_backward()
                 utime.sleep(0.01)
+        
+        return result # will return 1 if target hit, 0 if end stop hit
                 
     
     def increment_to_target(self):
         # incremenet to target will move to target one step per call until the target is reached
-            if self.actual < self.target:
-                self.step_forward()
+        result = step_state.step_successful
+        if self.actual < self.target:
+            result = self.step_forward()
         
-            if self.actual > self.target:
-                self.step_backward()
+        if self.actual > self.target:
+            result = self.step_backward()
+        
+        return result # return result of step
         
         
     def auto_home(self):
