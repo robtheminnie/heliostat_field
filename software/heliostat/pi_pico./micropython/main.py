@@ -1,1 +1,0 @@
-# heliostat micropython main.py
