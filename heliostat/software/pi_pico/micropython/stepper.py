@@ -7,6 +7,7 @@ class step_state:
         self.target_hit = 1
         self.min_stop_hit = 2
         self.max_stop_hit = 3
+    #end def
         
 
 step_state = step_state()
@@ -35,6 +36,7 @@ class stepper:
         # set current state
         self.state = 0  # current active state/ phase
         self.set_state_0()
+    # end def
         
         
 # states:
@@ -53,6 +55,7 @@ class stepper:
         self.coil_C.value(0)
         self.coil_D.value(0)
         self.state = 0
+    # end def
         
         
     def set_state_1(self):
@@ -61,6 +64,7 @@ class stepper:
         self.coil_C.value(0)
         self.coil_D.value(0)
         self.state = 1
+    # end def
         
         
     def set_state_2(self):
@@ -69,6 +73,7 @@ class stepper:
         self.coil_C.value(0)
         self.coil_D.value(0)
         self.state = 2
+    # end def
         
         
     def set_state_3(self):
@@ -77,6 +82,7 @@ class stepper:
         self.coil_C.value(1)
         self.coil_D.value(0)
         self.state = 3
+    # end def
         
         
     def set_state_4(self):
@@ -85,6 +91,7 @@ class stepper:
         self.coil_C.value(1)
         self.coil_D.value(0)
         self.state = 4
+    # end def
         
         
     def set_state_5(self):
@@ -93,6 +100,7 @@ class stepper:
         self.coil_C.value(1)
         self.coil_D.value(1)
         self.state = 5
+    # end def
         
         
     def set_state_6(self):
@@ -101,6 +109,7 @@ class stepper:
         self.coil_C.value(0)
         self.coil_D.value(1)
         self.state = 6
+    # end def
         
         
     def set_state_7(self):
@@ -109,6 +118,7 @@ class stepper:
         self.coil_C.value(0)
         self.coil_D.value(1)
         self.state = 7
+    # end def
         
         
     def step_forward(self):
@@ -131,12 +141,15 @@ class stepper:
                 self.set_state_7()
             elif self.state == 7:
                 self.set_state_0()
+            #end if
                 
             self.actual += 1
             
             return step_state.step_successful # step complete
         else:
             return step_state.max_stop_hit # step not complete, end stop hit
+        #end if
+    # end def
         
     
     def step_backward(self):
@@ -159,12 +172,15 @@ class stepper:
                 self.set_state_5()
             elif self.state == 7:
                 self.set_state_6()
+            #end if
             
             self.actual -= 1
             
             return step_state.step_successful # step complete
         else:
             return step_state.min_stop_hit # step not complete, end stop hit
+        #end if
+    # end def
         
         
     def move_to_target(self):
@@ -174,12 +190,16 @@ class stepper:
             if self.actual < self.target:
                 result = self.step_forward()
                 utime.sleep(0.01)
+            #end if
         
             if self.actual > self.target:
                 result = self.step_backward()
                 utime.sleep(0.01)
+            #endif
+        #end while
         
         return result # will return 1 if target hit, 0 if end stop hit
+    # end def
                 
     
     def increment_to_target(self):
@@ -187,11 +207,14 @@ class stepper:
         result = step_state.step_successful
         if self.actual < self.target:
             result = self.step_forward()
+        #end if
         
         if self.actual > self.target:
             result = self.step_backward()
+        #end if
         
         return result # return result of step
+    # end def
         
         
     def auto_home(self):
@@ -204,6 +227,7 @@ class stepper:
             
             # pause briefly
             utime.sleep(0.01)
+        # end while
         
         # end stop hit, set actual to 0
         self.actual = 0
@@ -219,9 +243,11 @@ class stepper:
             
             # pause briefly
             utime.sleep(0.1)
+        # end while
         
-        # end stop hit, reset actual to more refined zero position
+        # hit end stop, set zero position
         self.actual = 0
+    # end def
         
         
     def find_end_points(self):
@@ -235,6 +261,7 @@ class stepper:
             
             # short pause
             utime.sleep(0.01)
+        # end while
             
         # move away from end stop
         self.target = self.actual - 50
@@ -247,13 +274,15 @@ class stepper:
             
             # pause
             utime.sleep(0.1)
+        # end while
             
-        # end stop hit, store range
+        # hit end stop, store range
         self.total_step_range = self.actual
         
         # return to home position
         self.auto_home()
         
+    # end def
         
         
             
