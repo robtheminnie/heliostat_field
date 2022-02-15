@@ -1,1 +1,0 @@
-#openmv main.py
