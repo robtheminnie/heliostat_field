@@ -19,6 +19,8 @@ def main():
     
     instruction_source = 0
     instruction = 0
+    
+# end def
 
 
     while True:
@@ -34,7 +36,10 @@ def main():
         
         print(instruction_source)
         print(instruction)
+        
+    # end while
 
 
 if __name__ == "__main__":
     main()
+# end if
