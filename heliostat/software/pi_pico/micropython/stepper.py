@@ -33,8 +33,7 @@ class stepper:
         # init total step range
         self.total_step_range = 0;  # number of steps between start end stop, and end end stop
         
-        # set current state
-        self.state = 0  # current active state/ phase
+        # set current state to 0
         self.set_state_0()
     # end def
         
@@ -185,8 +184,8 @@ class stepper:
         
     def move_to_target(self):
         # move to target in one call
-        result = step_state.step_successful
-        while ((self.actual != self.target) and (result == step_state.step_successful)):
+        result = step_state.target_hit
+        while ((self.actual != self.target) and (result != step_state.min_stop_hit) and (result != step_state.max_stop_hit)):
             if self.actual < self.target:
                 result = self.step_forward()
                 utime.sleep(0.01)
@@ -204,7 +203,7 @@ class stepper:
     
     def increment_to_target(self):
         # incremenet to target will move to target one step per call until the target is reached
-        result = step_state.step_successful
+        result = step_state.target_hit
         if self.actual < self.target:
             result = self.step_forward()
         #end if
@@ -220,8 +219,9 @@ class stepper:
     def auto_home(self):
         # home to zero position
         
-        # first move quick to end stop
-        while self.stop_A.value() != 1:
+        # first move quick to min end stop
+        result = step_state.step_successful
+        while result != step_state.min_stop_hit:
             # step backward towards start end stop until end stop hit
             self.step_backward()
             
@@ -237,9 +237,10 @@ class stepper:
         self.move_to_target()
         
         # move towards end stop slowly
-        while self.stop_A.value() != 1:
+        result = step_state.step_successful
+        while result != step_state.min_stop_hit:
             # step backward towards start end stop until end stop hit
-            self.step_backward()
+            result = self.step_backward()
             
             # pause briefly
             utime.sleep(0.1)
@@ -256,8 +257,9 @@ class stepper:
         self.auto_home()
         
         # step forward quickly until end stop hit
-        while self.stop_B.value() != 1:
-            self.step_forward()
+        result = step_state.step_successful
+        while result != step_state.max_stop_hit:
+            result = self.step_forward()
             
             # short pause
             utime.sleep(0.01)
@@ -269,7 +271,8 @@ class stepper:
         
         
         # step forward slowly until end stop hit
-        while self.stop_B.value() != 1:
+        result = step_state.step_successful
+        while result != step_state.max_stop_hit:
             self.step_forward()
             
             # pause
