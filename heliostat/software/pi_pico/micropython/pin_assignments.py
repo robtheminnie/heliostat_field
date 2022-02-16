@@ -3,7 +3,7 @@
 class pin_assignments(self):
   def __init__(self):
     # uart to master
-    self.uart_to_master_TX = 0
+    self.uart_from_master_TX = 0
     self.uart_to_master_RX = 1
 
     # uart to slaves
