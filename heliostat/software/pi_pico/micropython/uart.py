@@ -19,8 +19,8 @@ class uart_message:
         self.source = bytearray([0])
         self.destination = bytearray([0])
         self.instruction_ID = bytearray([0])
-        self.data = bytearray([0, 0])
-        self.raw = bytearray([0, 0, 0, 0, 0])
+        self.data = bytearray([0, 0, 0, 0])
+        self.raw = bytearray([0, 0, 0, 0, 0, 0, 0])
     #end def
         
     def struct_to_raw(self):
@@ -33,7 +33,7 @@ class uart_message:
         self.source = self.raw[0]
         self.destination = self.raw[1]
         self.instruction_ID = self.raw[2]
-        self.data = self.raw[3:5]
+        self.data = self.raw[3:7]
     #end def
     
     def fill_raw(self, raw):
