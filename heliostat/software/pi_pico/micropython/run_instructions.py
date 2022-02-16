@@ -43,6 +43,9 @@ def run_instructions(instruction, data):
     # move axis to target positions
     pan_stepper.move_to_target((data[0] << 8) | data[1])
     tilt_stepper.move_to_target((data[2] << 8) | data[3])
+  
+  elif instruction = instruction_ID.auto_zero:
+    print("auto zero position")
     
   #end if
   
