@@ -69,8 +69,20 @@ class uart_interface:
         self.uart_to_slaves = machine.UART(1, baudrate=19200)
         self.led = machine.Pin(25, machine.Pin.OUT)
     # end def
-        
+    
+    
+    def send_down_chain(self, message):
+        # this sends the message down chain, away from master
+        self.uart_to_slaves.write(message.raw)
+    #end def
+    
+    
+    def send_up_chain(self, message):
+        # this sends the message up chain, towards master
+        self.uart_from_master.write(message.raw)
+    #end def
 
+    
     def check_for_data(self):
         print("checking for data")
         
@@ -114,7 +126,7 @@ class uart_interface:
                     # this is not for me, pass it on
                     print("forward from master")
                     uart_message.struct_to_raw()
-                    self.uart_to_slaves.write(uart_message.raw)
+                    self.send_down_chain(uart_message.raw)
                 #end if
             
     
@@ -144,7 +156,7 @@ class uart_interface:
                 
                 # pack and send data
                 uart_message.struct_to_raw()
-                self.uart_from_master.write(uart_message.raw)
+                self.send_up_chain(uart_message.raw)
 
             #end if
         #end if
@@ -152,5 +164,5 @@ class uart_interface:
         return 0, 0
     
     #end def
-    
+        
 #end class
