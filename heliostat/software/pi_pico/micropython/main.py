@@ -25,9 +25,7 @@ def main():
         print(instruction_source)
         print(instruction)
         
-        if instruction != 0:
-            run_instruction(message.instruction, message.data)
-        
+        run_instruction(message.instruction, message.data)        
         
         get_imu_data()
         
