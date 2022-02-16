@@ -35,6 +35,19 @@ class uart_message:
         self.instruction_ID = self.raw[2]
         self.data = self.raw[3:5]
     #end def
+    
+    def fill_raw(self, raw):
+        self.raw = raw
+        self.raw_to_struct()
+    #end def
+    
+    def fill_struct(self, source, destination, instruction, data):
+        self.source = source
+        self.destination = destination
+        self.instruction = instruction
+        self.data = data
+        self.struct_to_raw
+    #end def
         
 #end class
      
@@ -74,9 +87,7 @@ class uart_interface:
                 # buffer is correct length
                 
                 # copy data ready to transmit onwards
-                uart_message.raw = temp_buffer
-                
-                uart_message.raw_to_struct()
+                uart_message.fill_raw(temp_buffer)
                 
                 # decrement destination ID
                 uart_message.destination_ID -= 1
@@ -119,8 +130,7 @@ class uart_interface:
             # check buffer length is correct
             if len(temp_buffer) == 5:
                 # copy buffer ready to transmit onwards
-                uart_message.raw = temp_buffer
-                uart_message.raw_to_struct()
+                uart_message.fill_raw(temp_buffer)
                 
                 print("data from slave")
                 print(uart_message)
@@ -133,7 +143,7 @@ class uart_interface:
                 print("forward to master")
                 
                 # pack and send data
-                uart_message.struct_to_raw
+                uart_message.struct_to_raw()
                 self.uart_from_master.write(uart_message.raw)
 
             #end if
