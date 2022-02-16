@@ -7,7 +7,7 @@ i2c = machine.I2C(pin_assignments.imu_i2c_port, sda=machine.Pin(pin_assignments.
 imu = MPU6050(i2c)
 
 
-def get_data():
+def get_imu_data():
   
   #print(imu.accel.xyz,imu.gyro.xyz,imu.temperature,end='\r')
 
