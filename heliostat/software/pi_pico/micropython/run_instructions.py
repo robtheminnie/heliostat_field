@@ -26,7 +26,10 @@ tilt_stepper = stepper.stepper(pin_assignment.tilt_coil_A, \
 
 def run_instructions(instruction, data):
   
-  if instruction = instruction_ID.auto_home:
+  if instruction = instruction_ID.ndef:
+    # do nothing, no instruction
+    
+  elif instruction = instruction_ID.auto_home:
     print("running auto home")
     # auto home both axis
     pan_stepper.auto_home()
@@ -43,6 +46,10 @@ def run_instructions(instruction, data):
     # move axis to target positions
     pan_stepper.move_to_target((data[0] << 8) | data[1])
     tilt_stepper.move_to_target((data[2] << 8) | data[3])
+  
+  elif instruction = instruction_ID.auto_zero:
+    print("auto zero position")
+    # auto zero x,y axis to get mirror horizontal, allows for detemrining pan axis inclination
     
   #end if
   
