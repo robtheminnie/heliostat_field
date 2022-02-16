@@ -1,15 +1,11 @@
 import utime
 import machine
-import stepper
+import run_instructions
 import uart
 
 
     
 def main():
-    
-    print("init steppers")
-    pan_stepper = stepper.stepper(11, 12, 13, 14, 15, 16)
-    tilt_stepper = stepper.stepper(17, 18, 19, 20, 21, 22)
     
     print("init uart")
     uart_interface = uart.uart_interface()
@@ -25,17 +21,13 @@ def main():
 
     while True:
         utime.sleep(0.1)
-        
-        print(pan_stepper.actual)
-        print(tilt_stepper.actual)
-        
-        pan_stepper.increment_to_target()
-        tilt_stepper.increment_to_target()
-        
+                
         message = uart_interface.check_for_data()
         
         print(instruction_source)
         print(instruction)
+        
+        run_instruction(message.instruction, message.data)
         
     # end while
 
