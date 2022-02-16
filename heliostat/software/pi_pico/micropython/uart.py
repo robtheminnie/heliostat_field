@@ -9,6 +9,10 @@ class instruction_ID:
         self.get_ID = 1
         self.auto_home = 2
         self.find_end_points = 3
+        self.move_to_target = 4
+    #end def
+    
+#end class
 
 instruction_ID = instruction_ID()
 
