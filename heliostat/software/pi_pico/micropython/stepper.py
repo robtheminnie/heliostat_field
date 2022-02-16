@@ -182,8 +182,9 @@ class stepper:
     # end def
         
         
-    def move_to_target(self):
+    def move_to_target(self, target):
         # move to target in one call
+        self.target = target
         result = step_state.target_hit
         while ((self.actual != self.target) and (result != step_state.min_stop_hit) and (result != step_state.max_stop_hit)):
             if self.actual < self.target:
