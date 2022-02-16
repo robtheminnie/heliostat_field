@@ -1,5 +1,6 @@
 import machine
 import utime
+import pin_assignments
 
 
 # class to define instruciton IDs, used like a enumeration (bluh!)
@@ -56,7 +57,9 @@ class uart_message:
 #end class
      
 uart_message = uart_message()
-        
+
+# init pin_assignment class for enumerations
+pin_assignments = pin_assignments()
 
 # When data is transmitted from master camera down the chain, the master sets the source as 0, and the destination to the desired slave ID.
 # Each slave decrements the destination ID.
@@ -69,8 +72,16 @@ uart_message = uart_message()
 class uart_interface:
     def __init__(self):
         # init uart ports
-        self.uart_from_master = machine.UART(0, baudrate=19200)
-        self.uart_to_slaves = machine.UART(1, baudrate=19200)
+        self.uart_from_master = machine.UART(0, \
+                                             baudrate=19200, \
+                                             tx=machine.Pin(pin_assignments.uart_from_master_TX) \
+                                             rx=machine.Pin(pin_assignments.uart_from_master_RX))
+        
+        self.uart_to_slaves = machine.UART(1, \
+                                             baudrate=19200, \
+                                             tx=machine.Pin(pin_assignments.uart_to_slaves_TX) \
+                                             rx=machine.Pin(pin_assignments.uart_to_slaves_RX))
+        
         self.led = machine.Pin(25, machine.Pin.OUT)
     # end def
     
