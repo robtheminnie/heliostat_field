@@ -1,13 +1,27 @@
 import stepper
+import pin_assignment
 
 
-## init instruction ID class for enumerations
+# init instruction ID class for enumerations
 instruction_ID = instruction_ID()
 
+# init pin assignemnt class for enumerations
+pin_assignemnt = pin assignemnt()
 
 print("init steppers")
-pan_stepper = stepper.stepper(11, 12, 13, 14, 15, 16)
-tilt_stepper = stepper.stepper(17, 18, 19, 20, 21, 22)
+pan_stepper = stepper.stepper(pin_assignment.pan_coil_A, \
+                              pin_assignment.pan_coil_B, \
+                              pin_assignment.pan_coil_C, \
+                              pin_assignment.pan_coil_D, \
+                              pin_assignment.pan_min_stop, \ 
+                              pin_assignment.pan_max_stop)
+
+tilt_stepper = stepper.stepper(pin_assignment.tilt_coil_A, \
+                               pin_assignment.tilt_coil_B, \
+                               pin_assignment.tilt_coil_C, \
+                               pin_assignment.tilt_coil_D, \
+                               pin_assignment.tilt_min_stop, \
+                               pin_assignment.tilt_max_stop)
 
 
 def run_instructions(instruction, data):
