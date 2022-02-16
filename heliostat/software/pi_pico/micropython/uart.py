@@ -95,7 +95,7 @@ class uart_interface:
                 temp_buffer += self.uart_from_master.read(1)
             # end while
             
-            if len(temp_buffer) == 5:
+            if len(temp_buffer) == 7:
                 # buffer is correct length
                 
                 # copy data ready to transmit onwards
@@ -140,7 +140,7 @@ class uart_interface:
             # end while
             
             # check buffer length is correct
-            if len(temp_buffer) == 5:
+            if len(temp_buffer) == 7:
                 # copy buffer ready to transmit onwards
                 uart_message.fill_raw(temp_buffer)
                 
