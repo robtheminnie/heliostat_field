@@ -16,9 +16,6 @@ def main():
     instruction_source = 0
     instruction = 0
     
-# end def
-
-
     while True:
         utime.sleep(0.1)
                 
@@ -30,6 +27,8 @@ def main():
         run_instruction(message.instruction, message.data)
         
     # end while
+
+# end def
 
 
 if __name__ == "__main__":
