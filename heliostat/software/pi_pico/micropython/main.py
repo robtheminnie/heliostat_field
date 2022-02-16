@@ -2,6 +2,7 @@ import utime
 import machine
 import run_instructions
 import uart
+import imu_driver
 
 
     
@@ -17,7 +18,7 @@ def main():
     instruction = 0
     
     while True:
-        utime.sleep(0.1)
+        utime.sleep(1)
                 
         message = uart_interface.check_for_data()
         
@@ -25,6 +26,8 @@ def main():
         print(instruction)
         
         run_instruction(message.instruction, message.data)
+        
+        get_imu_data()
         
     # end while
 
