@@ -14,9 +14,6 @@ def get_imu_data():
   ax=round(imu.accel.x,2)
   ay=round(imu.accel.y,2)
   az=round(imu.accel.z,2)
-  gx=round(imu.gyro.x)
-  gy=round(imu.gyro.y)
-  gz=round(imu.gyro.z)
   tem=round(imu.temperature,2)
 
-  print(ax,"\t",ay,"\t",az,"\t",gx,"\t",gy,"\t",gz,"\t",tem,"        ",end="\r")
+  print(ax,"\t",ay,"\t",az,"\t",tem,"        ",end="\r")
