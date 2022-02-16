@@ -26,7 +26,10 @@ tilt_stepper = stepper.stepper(pin_assignment.tilt_coil_A, \
 
 def run_instructions(instruction, data):
   
-  if instruction = instruction_ID.auto_home:
+  if instruction = instruction_ID.ndef:
+    # do nothing, no instruction
+    
+  elif instruction = instruction_ID.auto_home:
     print("running auto home")
     # auto home both axis
     pan_stepper.auto_home()
