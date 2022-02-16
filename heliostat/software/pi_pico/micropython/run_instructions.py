@@ -49,6 +49,7 @@ def run_instructions(instruction, data):
   
   elif instruction = instruction_ID.auto_zero:
     print("auto zero position")
+    # auto zero x,y axis to get mirror horizontal, allows for detemrining pan axis inclination
     
   #end if
   
