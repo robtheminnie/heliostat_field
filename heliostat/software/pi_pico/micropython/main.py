@@ -25,7 +25,7 @@ def main():
         print(instruction_source)
         print(instruction)
         
-        run_instruction(message.instruction, message.data)
+        # run_instruction(message.instruction, message.data)
         
         get_imu_data()
         
