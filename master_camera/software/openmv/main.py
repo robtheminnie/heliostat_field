@@ -36,7 +36,7 @@ while(True):
     temp_buffer = bytearray()
     temp_buffer += source_index + destination_index + instruction_ID + data
     uart.write(temp_buffer)
-    time.sleep_ms(2000)
+    time.sleep_ms(3000)
 
     if idx > 5:
         idx = 1
