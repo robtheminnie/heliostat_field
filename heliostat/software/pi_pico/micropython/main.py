@@ -11,9 +11,6 @@ def main():
     print("init uart")
     uart_interface = uart.uart_interface()
     
-    pan_stepper.target = 20
-    tilt_stepper.target = -20
-    
     instruction_source = 0
     instruction = 0
     
@@ -25,9 +22,9 @@ def main():
         print(instruction_source)
         print(instruction)
         
-        run_instruction(message.instruction, message.data)        
+        run_instructions.run_instructions(message.instruction_ID, message.data)        
         
-        get_imu_data()
+        imu_driver.get_imu_data()
         
     # end while
 

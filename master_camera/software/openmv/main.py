@@ -11,7 +11,7 @@ from machine import UART
 # Always pass UART 3 for the UART number for your OpenMV Cam.
 # The second argument is the UART baud rate. For a more advanced UART control
 # example see the BLE-Shield driver.
-uart = UART(3, 19200)
+uart = UART(3, 19200, bits=8, parity=None, stop=1)
 
 # instructions to implement:
     # Set ID.  Sent by master cam at power up.  Destionation index is set to 0 by master cam and sent.
@@ -21,16 +21,23 @@ uart = UART(3, 19200)
     #
     # heliostat adjust angle
 
+idx = 1
 
 while(True):
 
     source_index = bytearray([0])       # index of sending node, 0 = cam
-    destination_index = bytearray([1])  # index of receiving node
+    destination_index = bytearray([idx])  # index of receiving node
     instruction_ID = bytearray([0])     # instruction
 
-    data = bytearray([1, 3])            # data to send
+    idx += 1
+
+    data = bytearray([1, 3, 0, 0])            # data to send
 
     temp_buffer = bytearray()
-    temp_buffer += destination_index + source_index + instruction_ID + data
+    temp_buffer += source_index + destination_index + instruction_ID + data
     uart.write(temp_buffer)
-    time.sleep_ms(5000)
+    time.sleep_ms(2000)
+
+    if idx > 5:
+        idx = 1
+

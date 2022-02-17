@@ -2,6 +2,9 @@ import machine
 import utime
 import pin_assignments
 
+# init pin_assignment class for enumerations
+pin_assignments = pin_assignments.pin_assignment()
+
 
 # class to define instruciton IDs, used like a enumeration (bluh!)
 class instruction_ID:
@@ -31,36 +34,35 @@ class uart_message:
         
     def struct_to_raw(self):
         # convert structured data to raw byte array
-        self.raw = self.source + self.destination + self.inctruction_ID + self.data
+        self.raw = self.source + self.destination + self.instruction_ID + self.data
     #end def
         
     def raw_to_struct(self):
         # convert raw data to structured data
-        self.source = self.raw[0]
-        self.destination = self.raw[1]
-        self.instruction_ID = self.raw[2]
-        self.data = self.raw[3:7]
+        self.source = bytearray([self.raw[0]])
+        self.destination = bytearray([self.raw[1]])
+        self.instruction_ID = bytearray([self.raw[2]])
+        self.data = bytearray(self.raw[3:7])
     #end def
     
     def fill_raw(self, raw):
-        self.raw = raw
+        self.raw = bytearray(raw)
         self.raw_to_struct()
     #end def
     
     def fill_struct(self, source, destination, instruction, data):
-        self.source = source
-        self.destination = destination
-        self.instruction = instruction
-        self.data = data
-        self.struct_to_raw
+        self.source = bytearray([source])
+        self.destination = bytearray([destination])
+        self.instruction = bytearray([instruction])
+        self.data = bytearray([data])
+        self.struct_to_raw()
     #end def
         
 #end class
      
+
 uart_message = uart_message()
 
-# init pin_assignment class for enumerations
-pin_assignments = pin_assignments()
 
 # When data is transmitted from master camera down the chain, the master sets the source as 0, and the destination to the desired slave ID.
 # Each slave decrements the destination ID.
@@ -73,15 +75,16 @@ pin_assignments = pin_assignments()
 class uart_interface:
     def __init__(self):
         # init uart ports
-        self.uart_from_master = machine.UART(0, \
-                                             baudrate=19200, \
-                                             tx=machine.Pin(pin_assignments.uart_from_master_TX) \
-                                             rx=machine.Pin(pin_assignments.uart_from_master_RX))
-        
         self.uart_to_slaves = machine.UART(1, \
                                              baudrate=19200, \
-                                             tx=machine.Pin(pin_assignments.uart_to_slaves_TX) \
+                                             tx=machine.Pin(pin_assignments.uart_to_slaves_TX), \
                                              rx=machine.Pin(pin_assignments.uart_to_slaves_RX))
+        
+        self.uart_from_master = machine.UART(0, \
+                                             baudrate=19200, \
+                                             tx=machine.Pin(pin_assignments.uart_from_master_TX), \
+                                             rx=machine.Pin(pin_assignments.uart_from_master_RX))
+        
         
         self.led = machine.Pin(25, machine.Pin.OUT)
     # end def
@@ -101,10 +104,12 @@ class uart_interface:
     
     def check_for_data(self):
         print("checking for data")
-        
+
         # check if data from master
         if self.uart_from_master.any() > 0:
             temp_buffer = bytearray()
+            
+            print("data from up chain")
             
             # read data from master into temp buffer
             while self.uart_from_master.any() > 0:
@@ -118,13 +123,14 @@ class uart_interface:
                 uart_message.fill_raw(temp_buffer)
                 
                 # decrement destination ID
-                uart_message.destination_ID -= 1
+                uart_message.destination[0] -= 1
+                
                 
                 print("data from master")
-                print(uart_message)
+                print(uart_message.raw)
                 
                 
-                if uart_message.destination == 0:
+                if uart_message.destination[0] == 0:
                     # destination ID is 0, this must be for me!
                     print("this is for me")
                     self.led.toggle()
@@ -133,22 +139,25 @@ class uart_interface:
                     # not for me
                     
                     # check if instruction is a get ID
-                    if uart_message.instruction_ID == instruction_ID.get_ID:
+                    if uart_message.instruction_ID[0] == instruction_ID.get_ID:
                         # it is, increment destination by 1, this is my ID, then forward to next slave
-                        uart_message.destination += 1
-                        self.myID = uart_message.destination
+                        uart_message.destination[0] += 1
+                        self.myID = uart_message.destination[0]
                     #end if
                         
                     # this is not for me, pass it on
                     print("forward from master")
                     uart_message.struct_to_raw()
-                    self.send_down_chain(uart_message.raw)
+                    print(uart_message.raw)
+                    self.send_down_chain(uart_message)
                 #end if
             
     
         # check if any data from slaves
         if self.uart_to_slaves.any() > 0:
             temp_buffer = bytearray()
+            
+            print("data from down chain")
             
             # read data to temp buffer
             while self.uart_to_slaves.any() > 0:
@@ -172,12 +181,12 @@ class uart_interface:
                 
                 # pack and send data
                 uart_message.struct_to_raw()
-                self.send_up_chain(uart_message.raw)
+                self.send_up_chain(uart_message)
 
             #end if
         #end if
                 
-        return 0, 0
+        return uart_message
     
     #end def
         

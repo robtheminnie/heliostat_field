@@ -1,11 +1,11 @@
 
 
-class pin_assignments(self):
+class pin_assignment:
   def __init__(self):
     # uart to master, uart 0
     self.uart_from_master_port = 0
     self.uart_from_master_TX = 0
-    self.uart_to_master_RX = 1
+    self.uart_from_master_RX = 1
 
     # uart to slaves, uart 1
     self.uart_to_slaves_port = 1
@@ -32,7 +32,7 @@ class pin_assignments(self):
     
     
     # i2c port for imu, i2c 0
-    self.imu_i2c_port = 0
+    self.imu_i2c_port = 1
     self.imu_sda = 6
     self.imu_sdl = 7
     

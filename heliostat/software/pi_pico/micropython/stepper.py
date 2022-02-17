@@ -1,5 +1,9 @@
 import machine
 import utime
+import pin_assignments
+
+# init pin_assignment class for enumerations
+pin_assignments = pin_assignments.pin_assignment()
 
 class step_state:
     def __init__(self):
