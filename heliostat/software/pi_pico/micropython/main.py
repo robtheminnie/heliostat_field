@@ -2,8 +2,6 @@ import utime
 import machine
 import run_instructions
 import uart
-import imu_driver
-
 
     
 def main():
@@ -23,8 +21,6 @@ def main():
         print(instruction)
         
         run_instructions.run_instructions(message.instruction_ID, message.data)        
-        
-        imu_driver.get_imu_data()
         
     # end while
 
