@@ -1,7 +1,6 @@
 import stepper
 import pin_assignments
 import uart
-import imu_driver
 
 
 # init instruction ID class for enumerations
@@ -52,7 +51,7 @@ def run_instructions(instruction, data):
   elif instruction == instruction_ID.auto_zero:
     print("auto zero position")
     # auto zero x,y axis to get mirror horizontal, allows for pan axis inclination determination
-    imu_driver.get_imu_data()
+    
     
   #end if
   
