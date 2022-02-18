@@ -41,9 +41,9 @@ class stepper:
         self.actual_angle_position = 0 # actual position in motor angle
         self.target_angle_position = 0 # target position in motor angle
         
-        # init end stop pins
-        self.min_stop = machine.Pin(min_end_stop, machine.Pin.IN)  # start end stop switch
-        self.max_stop = machine.Pin(max_end_stop, machine.Pin.IN)  # end end stop switch
+        # init end stop pins, end stops switch to ground, 0 = end stop hit, 1 = end stop not hit
+        self.min_stop = machine.Pin(min_end_stop, machine.Pin.IN, machine.Pin.PULL_UP)  # start end stop switch, switch connected to pin and ground
+        self.max_stop = machine.Pin(max_end_stop, machine.Pin.IN, machine.Pin.PULL_UP)  # end end stop switch, switch connected to pin and ground
         
         # init total step range
         self.total_step_range = 0;  # number of steps between start end stop, and end end stop
@@ -149,7 +149,7 @@ class stepper:
         
     def step_forward(self):
         # step forward only in end stop not hit
-        if self.max_stop.value() != 1:
+        if self.max_stop.value() != 0:
             # not against end stop
             if self.state == 0:
                 self.set_state_1()
@@ -180,7 +180,7 @@ class stepper:
     
     def step_backward(self):
         # step backward only if end stop not hit
-        if self.min_stop.value() != 1:
+        if self.min_stop.value() != 0:
             # not against end stop
             if self.state == 0:
                 self.set_state_7()
