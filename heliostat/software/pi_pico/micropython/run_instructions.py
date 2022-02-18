@@ -52,8 +52,10 @@ def run_instructions(instruction, data):
   elif instruction == instruction_ID.move_to_target:
     print("moving to target")
     # move axis to target positions
-    pan_stepper.move_to_target((data[0] << 8) | data[1])
-    tilt_stepper.move_to_target((data[2] << 8) | data[3])
+    pan_angle = ((data[0] << 8) | data[1]) / 100
+    tilt_angle = ((data[2] << 8) | data[3]) / 100
+    pan_stepper.move_to_target_angle(pan_angle)
+    tilt_stepper.move_to_target_angle(tilt_angle)
   
   elif instruction == instruction_ID.auto_zero:
     print("auto zero position")
