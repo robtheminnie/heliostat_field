@@ -10,6 +10,7 @@ i2c = machine.I2C(pin_assignments.imu_i2c_port, sda=machine.Pin(pin_assignments.
 imu = MPU6050(i2c)
 
 theta = 0
+theta2 = 0
 
 def get_imu_data():
   
@@ -21,5 +22,7 @@ def get_imu_data():
   tem=round(imu.temperature,2)
   
   theta = math.atan(math.sqrt((ax * ax) + (ay * ay)) / az) / (2 * 3.1415) * 360
+  
+  theta2 = imu.accel.inclination
 
-  print(theta,"\t",tem,"        ",end="\r")
+  print(theta,"\t",theta2,"\t",tem,"        ",end="\r")
