@@ -2,6 +2,8 @@ import machine
 import utime
 import pin_assignments
 
+
+
 # init pin_assignment class for enumerations
 pin_assignments = pin_assignments.pin_assignment()
 
@@ -26,9 +28,18 @@ class stepper:
         self.coil_C = machine.Pin(C, machine.Pin.OUT) # pin that drives motor coil C
         self.coil_D = machine.Pin(D, machine.Pin.OUT) # pin that drives motor coil D
         
+        
+        # stepper is 64 step per rotation with gear ratio
+        # 32/9, 22/11, 26/9, 31/10
+        # results in 0.08832 degrees output shaft rotation per step
+        self.steps_per_rotation = (64 * (32 * 22 * 26 * 31) / (9 * 11 * 9 * 10))
+        
         # init target and actual position
-        self.actual = 0 # actual position
-        self.target = 0 # target position
+        self.actual_step_position = 0 # actual position in motor steps
+        self.target_step_position = 0 # target position in motor steps
+        
+        self.actual_angle_position = 0 # actual position in motor angle
+        self.target_angle_position = 0 # target position in motor angle
         
         # init end stop pins
         self.min_stop = machine.Pin(min_end_stop, machine.Pin.IN)  # start end stop switch
@@ -40,7 +51,19 @@ class stepper:
         # set current state to 0
         self.set_state_0()
     # end def
-        
+    
+    
+    def angle_to_steps(self, angle)
+        # convert degrees to steps
+        return round(angle / 360 * self.steps_per_rotation, 0)
+    #end def
+    
+    
+    def steps_to_angle(self, steps)
+        # convert steps to degrees
+        return (steps * 360 / self.steps_per_rotation)
+    #end def
+    
         
 # states:
     # 0, A
@@ -186,40 +209,29 @@ class stepper:
     # end def
         
         
-    def move_to_target(self, target):
+    def move_to_target_angle(self, target_angle):
         # move to target in one call
-        self.target = target
+        self.target_angle_position = target_angle
+        self.target_step_position = self.angle_to_steps(self.target_angle_position)
+        
         result = step_state.target_hit
-        while ((self.actual != self.target) and (result != step_state.min_stop_hit) and (result != step_state.max_stop_hit)):
-            if self.actual < self.target:
+        while ((self.actual_step_position != self.target_step_position) and (result != step_state.min_stop_hit) and (result != step_state.max_stop_hit)):
+            if self.actual_step_position < self.target_step_position:
                 result = self.step_forward()
                 utime.sleep(0.01)
             #end if
         
-            if self.actual > self.target:
+            if self.actual_step_position > self.target_step_position:
                 result = self.step_backward()
                 utime.sleep(0.01)
             #endif
         #end while
         
+        self.actual_angle_position = self.steps_to_angle(self.actual_step_position)
+        
         return result # will return 1 if target hit, 0 if end stop hit
     # end def
                 
-    
-    def increment_to_target(self):
-        # incremenet to target will move to target one step per call until the target is reached
-        result = step_state.target_hit
-        if self.actual < self.target:
-            result = self.step_forward()
-        #end if
-        
-        if self.actual > self.target:
-            result = self.step_backward()
-        #end if
-        
-        return result # return result of step
-    # end def
-        
         
     def auto_home(self):
         # home to zero position
@@ -235,11 +247,11 @@ class stepper:
         # end while
         
         # end stop hit, set actual to 0
-        self.actual = 0
+        self.actual_step_position = 0
+        self.actual_angle_position = 0
         
         # move forward away from end stop
-        self.target = 50
-        self.move_to_target()
+        self.move_to_target_angle(5)
         
         # move towards end stop slowly
         result = step_state.step_successful
@@ -271,9 +283,7 @@ class stepper:
         # end while
             
         # move away from end stop
-        self.target = self.actual - 50
-        self.move_to_target()
-        
+        self.move_to_target_angle(self.actual_angle_position - 5)
         
         # step forward slowly until end stop hit
         result = step_state.step_successful
