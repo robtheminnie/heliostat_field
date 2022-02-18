@@ -14,10 +14,18 @@ class step_state:
         self.min_stop_hit = 2
         self.max_stop_hit = 3
     #end def
-        
+    
 
 step_state = step_state()
+
+
+class stop_state:
+    def __init__(self):
+        self.hit = 0
+        self.not_hit = 1
         
+stop_state = stop_state()    
+
 class stepper:
     def __init__(self, A, B, C, D, min_end_stop, max_end_stop):
         # init class
@@ -53,13 +61,13 @@ class stepper:
     # end def
     
     
-    def angle_to_steps(self, angle)
+    def angle_to_steps(self, angle):
         # convert degrees to steps
         return round(angle / 360 * self.steps_per_rotation, 0)
     #end def
     
     
-    def steps_to_angle(self, steps)
+    def steps_to_angle(self, steps):
         # convert steps to degrees
         return (steps * 360 / self.steps_per_rotation)
     #end def
@@ -149,7 +157,7 @@ class stepper:
         
     def step_forward(self):
         # step forward only in end stop not hit
-        if self.max_stop.value() != 0:
+        if self.check_max_stop() == stop_state.not_hit:
             # not against end stop
             if self.state == 0:
                 self.set_state_1()
@@ -180,7 +188,7 @@ class stepper:
     
     def step_backward(self):
         # step backward only if end stop not hit
-        if self.min_stop.value() != 0:
+        if self.check_min_stop() == stop_state.not_hit:
             # not against end stop
             if self.state == 0:
                 self.set_state_7()
@@ -206,6 +214,16 @@ class stepper:
         else:
             return step_state.min_stop_hit # step not complete, end stop hit
         #end if
+    # end def
+    
+    
+    def check_min_stop(self):
+        return self.min_stop.value()
+    # end def
+    
+    
+    def check_max_stop(self):
+        return self.max_stop.value()
     # end def
         
         
