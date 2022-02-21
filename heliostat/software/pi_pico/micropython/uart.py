@@ -1,13 +1,13 @@
 import machine
 import utime
-import pin_assignments
-import instruction_ID
+import enumerations
+
 
 # init pin_assignment class for enumerations
-pin_assignments = pin_assignments.pin_assignment()
+pin_assignments = enumerations.pin_assignments()
 
 # init instruction_ID class for enumerations
-instruction_ID = instruction_ID.instruction_ID()
+instruction_ID = enumerations.instruction_ID()
 
 
 # class to define uart message structure
