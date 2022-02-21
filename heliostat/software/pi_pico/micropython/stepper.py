@@ -225,6 +225,12 @@ class stepper:
     def check_max_stop(self):
         return self.max_stop.value()
     # end def
+    
+    
+    def adjust_angle(self, angle):
+        target_angle = self.actual_angle_position + angle
+        self.move_to_target_angle(target_angle)
+    # end def
         
         
     def move_to_target_angle(self, target_angle):
