@@ -1,16 +1,15 @@
 import stepper
-import pin_assignments
-import instruction_ID
+from enumerations
 import uart
 from imu import MPU6050
 import machine
 
 
 # init instruction ID class for enumerations
-instruction_ID = instruction_ID.instruction_ID()
+instruction_ID = enumerations.instruction_ID()
 
 # init pin assignemnt class for enumerations
-pin_assignments = pin_assignments.pin_assignment()
+pin_assignments = enumerations.pin_assignments()
 
 
 print("init steppers")
