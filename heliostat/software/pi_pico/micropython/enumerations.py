@@ -14,7 +14,7 @@ class instruction_ID:
 
 
 # class to enumerate pin assignments
-class pin_assignment:
+class pin_assignments:
   def __init__(self):
     # uart to master, uart 0
     self.uart_from_master_port = 0
