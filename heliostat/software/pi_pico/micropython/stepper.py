@@ -225,37 +225,7 @@ class stepper:
     def check_max_stop(self):
         return self.max_stop.value()
     # end def
-    
-    
-    def adjust_angle(self, angle):
-        target_angle = self.actual_angle_position + angle
-        self.move_to_target_angle(target_angle)
-    # end def
-        
-        
-    def move_to_target_angle(self, target_angle):
-        # move to target in one call
-        self.target_angle_position = target_angle
-        self.target_step_position = self.angle_to_steps(self.target_angle_position)
-        
-        result = step_state.target_hit
-        while ((self.actual_step_position != self.target_step_position) and (result != step_state.min_stop_hit) and (result != step_state.max_stop_hit)):
-            if self.actual_step_position < self.target_step_position:
-                result = self.step_forward()
-                utime.sleep(0.01)
-            #end if
-        
-            if self.actual_step_position > self.target_step_position:
-                result = self.step_backward()
-                utime.sleep(0.01)
-            #endif
-        #end while
-        
-        self.actual_angle_position = self.steps_to_angle(self.actual_step_position)
-        
-        return result # will return 1 if target hit, 0 if end stop hit
-    # end def
-                
+                    
         
     def auto_home(self):
         # home to zero position
@@ -291,40 +261,6 @@ class stepper:
         self.actual = 0
     # end def
         
-        
-    def find_end_points(self):
-        # find steps between end points
-        # first auto home to set 0 position
-        self.auto_home()
-        
-        # step forward quickly until end stop hit
-        result = step_state.step_successful
-        while result != step_state.max_stop_hit:
-            result = self.step_forward()
-            
-            # short pause
-            utime.sleep(0.01)
-        # end while
-            
-        # move away from end stop
-        self.move_to_target_angle(self.actual_angle_position - 5)
-        
-        # step forward slowly until end stop hit
-        result = step_state.step_successful
-        while result != step_state.max_stop_hit:
-            self.step_forward()
-            
-            # pause
-            utime.sleep(0.1)
-        # end while
-            
-        # hit end stop, store range
-        self.total_step_range = self.actual
-        
-        # return to home position
-        self.auto_home()
-        
-    # end def
         
         
             
