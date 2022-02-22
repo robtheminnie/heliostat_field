@@ -63,12 +63,12 @@ uart_message = uart_message()
 class uart_interface:
     def __init__(self):
         # init uart ports
-        self.uart_to_slaves = machine.UART(1, \
+        self.uart_to_slaves = machine.UART(pin_assignments.uart_to_slaves_port , \
                                              baudrate=19200, \
                                              tx=machine.Pin(pin_assignments.uart_to_slaves_TX), \
                                              rx=machine.Pin(pin_assignments.uart_to_slaves_RX))
         
-        self.uart_from_master = machine.UART(0, \
+        self.uart_from_master = machine.UART(pin_assignments.uart_from_master_port , \
                                              baudrate=19200, \
                                              tx=machine.Pin(pin_assignments.uart_from_master_TX), \
                                              rx=machine.Pin(pin_assignments.uart_from_master_RX))
