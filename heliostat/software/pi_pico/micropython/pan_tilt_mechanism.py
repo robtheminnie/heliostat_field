@@ -5,6 +5,8 @@ from imu import MPU6050
 # init pin assignemnt class for enumerations
 pin_assignments = enumerations.pin_assignments()
 
+step_state = steppers.step_state()
+
 
 class pan_tilt_mechanism:
   def __init__(self):
@@ -31,6 +33,9 @@ class pan_tilt_mechanism:
     self.imu.accel_range(0)   # accel = +/- 2g
     self.imu.accel_filer_range(6)  # filter = 5Hz
     
+    self.azimuth_target = 0
+    self.inclination_target = 0
+    
     # azimuth and inclinatoin offset for tilted axis
     self.azimuth_offset = 0       # angle required to rotate pan axis to get til axis horizontal
     self.inclination_offset = 0   # angle required to rotate tilt axis to get mirror flat when tilt axis is horizontal
@@ -50,26 +55,60 @@ class pan_tilt_mechanism:
     #end def
     
     
-    def move_to_target(self, pan_angle, tilt_angle):
-      self.azimuth_stepper.move_to_target_angle(pan_angle)
-      self.inclination_stepper.move_to_target_angle(tilt_angle)
+    def move_to_target(self, azimuth_target, inclination_target):
+      # move to azimuth
+      result = step_state.step_successful
+      error = self.imu.azimuth - azimuth_target
+      while ((error > 1) or (error < 1)) and ((result != step_state.min_stop_hit) and (result != step_state.max_stop_hit)):
+        
+        # do several steps together
+        steps = round(error * 20, 0)
+        
+        for s in range(steps)
+          if (error > 0)
+            result = self.azimuth_stepper.step_forward()
+          #end if
+
+          if (error < 0)
+            result = self.azimuth_stepper.step_backward()
+          #end if
+          
+          utime.sleep(0.005)
+        # end for
+
+        # check error
+        error = self.imu.azimuth - azimuth_target
+      # end while
+      
+      # move to inclination
+      result = step_state.step_successful
+      error = self.imu.inclination - inclination_target
+      while ((error > 1) or (error < 1)) and ((result != step_state.min_stop_hit) and (result != step_state.max_stop_hit)):
+        
+        # do several steps together
+        steps = round(error * 20, 0)
+        
+        for s in range(steps)
+          if (error > 0)
+            result = self.inclination_stepper.step_forward()
+          #end if
+
+          if (error < 0)
+            result = self.inclination_stepper.step_backward()
+          #end if
+          
+          utime.sleep(0.005)
+        # end for
+
+        # check error
+        error = self.imu.inclination - inclination_target
+      # end while
+      
     # end def
-    
     
     def auto_zero(self):
       # auto zero x,y axis to get mirror horizontal, allows for pan axis inclination determination
-      self.azimuth_stepper.auto_home()
-      self.inclination_stepper.auto_home()
-      
-      # store position
-      self.azimuth_offset = self.imu.azimuth
-      self.inclination_offset = self.imu.inclination
-      
-      # move to azimuth
-      self.azimuth_stepper.move_to_target_angle(self.azimuth_offset)
-      
-      # move to inclination
-      self.inclination_stepper.move_to_target_angle(self.inclination_offset)
+      self.move_to_target(0, 0)
       
     # end def
     
