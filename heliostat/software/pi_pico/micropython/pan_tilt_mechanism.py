@@ -27,6 +27,10 @@ class pan_tilt_mechanism:
     # init imu
     self.imu = MPU6050(machine.I2C(pin_assignments.imu_i2c_port, sda=machine.Pin(pin_assignments.imu_sda), scl=machine.Pin(pin_assignments.imu_sdl), freq=400000))
     
+    # set properties
+    self.imu.accel_range(0)   # accel = +/- 2g
+    self.imu.accel_filer_range(6)  # filter = 5Hz
+    
     # azimuth and inclinatoin offset for tilted axis
     self.azimuth_offset = 0       # angle required to rotate pan axis to get til axis horizontal
     self.inclination_offset = 0   # angle required to rotate tilt axis to get mirror flat when tilt axis is horizontal
