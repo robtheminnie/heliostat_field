@@ -66,10 +66,7 @@ class pan_tilt_mechanism:
       # restart
       
       azimuth_result = step_state.step_successful
-      azimuth_error = self.imu.azimuth - azimuth_target
-      
       inclination_result = step_state.step_successful
-      inclination_error = self.imu.inclination - inclination_target
         
       # check azimuth error
       azimuth_error = self.imu.azimuth - azimuth_target
@@ -91,6 +88,12 @@ class pan_tilt_mechanism:
       
       azimuth_on_limit = 0
       inclination_on_limit = 0
+      
+      print("inclination error = ")
+      print(inclination_error)
+      
+      print("azimuth error = ")
+      print(azimuth_error)
       
       # for azimuth and inclination, try to work towards the target until we either hit the target of hit a limit switch
       while ((!azimuth_on_target and !azimuth_on_limit) or (!inclination_on_target and !inclination_on_limit)):
@@ -166,6 +169,12 @@ class pan_tilt_mechanism:
         else:
           azimuth_on_target = 0
         #end if
+        
+        print("inclination error = ")
+        print(inclination_error)
+
+        print("azimuth error = ")
+        print(azimuth_error)
         
       # end while
       
