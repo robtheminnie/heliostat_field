@@ -56,52 +56,117 @@ class pan_tilt_mechanism:
     
     
     def move_to_target(self, azimuth_target, inclination_target):
-      # move to azimuth
-      result = step_state.step_successful
-      error = self.imu.azimuth - azimuth_target
-      while ((error > 1) or (error < 1)) and ((result != step_state.min_stop_hit) and (result != step_state.max_stop_hit)):
-        
-        # do several steps together
-        steps = round(error * 20, 0)
-        
-        for s in range(steps)
-          if (error > 0)
-            result = self.azimuth_stepper.step_forward()
-          #end if
-
-          if (error < 0)
-            result = self.azimuth_stepper.step_backward()
-          #end if
-          
-          utime.sleep(0.005)
-        # end for
-
-        # check error
-        error = self.imu.azimuth - azimuth_target
-      # end while
       
-      # move to inclination
-      result = step_state.step_successful
-      error = self.imu.inclination - inclination_target
-      while ((error > 1) or (error < 1)) and ((result != step_state.min_stop_hit) and (result != step_state.max_stop_hit)):
+      # check azimuth error
+      # check inclination error
+      # adjust azimuth
+      # recheck inclination
+      # adjust inclination
+      # recheck azimuth
+      # restart
+      
+      azimuth_result = step_state.step_successful
+      azimuth_error = self.imu.azimuth - azimuth_target
+      
+      inclination_result = step_state.step_successful
+      inclination_error = self.imu.inclination - inclination_target
+        
+      # check azimuth error
+      azimuth_error = self.imu.azimuth - azimuth_target
+
+      if ((azimuth_error < 1) and (azimuth_error > -1)):
+        azimuth_on_target = 1
+      else:
+        azimuth_on_target = 0
+      #end if
+
+      # check inclination error
+      inclination_error = self.imu.inclination - inclination_target
+
+      if ((inclination_error < 1) and (inclination_error > -1)):
+        inclination_on_target = 1
+      else:
+        inclination_on_target = 0
+      #end if
+      
+      azimuth_on_limit = 0
+      inclination_on_limit = 0
+      
+      # for azimuth and inclination, try to work towards the target until we either hit the target of hit a limit switch
+      while ((!azimuth_on_target and !azimuth_on_limit) or (!inclination_on_target and !inclination_on_limit)):
         
         # do several steps together
-        steps = round(error * 20, 0)
+        steps = round(azimuth_error * 20, 0)
         
         for s in range(steps)
-          if (error > 0)
-            result = self.inclination_stepper.step_forward()
+          if (azimuth_error > 0)
+            azimuth_result = self.azimuth_stepper.step_forward()
+            
+            # check stop
+            if (azimuth_result == step_state.max_stop_hit):
+              azimuth_on_limit = 1
+            else:
+              azimuth_on_limit = 0
           #end if
 
-          if (error < 0)
-            result = self.inclination_stepper.step_backward()
+          if (azimuth_error < 0)
+            azimuth_result = self.azimuth_stepper.step_backward()
+            
+            # check stop
+            if (azimuth_result == step_state.max_stop_hit):
+              azimuth_on_limit = 1
+            else:
+              azimuth_on_limit = 0
+          #end if
+          
+          utime.sleep(0.005)
+        # end for
+        
+        # check inclination error
+        inclination_error = self.imu.inclination - inclination_target
+        
+        if ((inclination_error < 1) and (inclination_error > -1)):
+          inclination_on_target = 1
+        else:
+          inclination_on_target = 0
+        #end if
+        
+        # do several steps together
+        steps = round(inclination_error * 20, 0)
+        
+        for s in range(steps)
+          if (inclination_error > 0)
+            inclination_result = self.inclination_stepper.step_forward()
+            
+            # check stop
+            if (inclination_result == step_state.max_stop_hit):
+              inclination_on_limit = 1
+            else:
+              inclination_on_limit = 0
+          #end if
+
+          if (inclination_error < 0)
+            inclination_result = self.inclination_stepper.step_backward()
+            
+            # check stop
+            if (inclination_result == step_state.min_stop_hit):
+              inclination_on_limit = 1
+            else:
+              inclination_on_limit = 0
           #end if
           
           utime.sleep(0.005)
         # end for
 
-        # check error
-        error = self.imu.inclination - inclination_target
+        # recheck azimuth errors
+        azimuth_error = self.imu.azimuth - azimuth_target
+        
+        if ((azimuth_error < 1) and (azimuth_error > -1)):
+          azimuth_on_target = 1
+        else:
+          azimuth_on_target = 0
+        #end if
+        
       # end while
       
     # end def
