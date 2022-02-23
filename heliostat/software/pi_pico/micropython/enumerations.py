@@ -2,12 +2,14 @@
 # class to define instruciton IDs, used like a enumeration (bluh!)
 class instruction_ID:
     def __init__(self):
-        self.ndef = 0
-        self.get_ID = 1
-        self.auto_home = 2
-        self.find_end_points = 3
-        self.move_to_target = 4
-        self.auto_zero = 5
+        self.ndef = 0                           # does nothing
+        self.get_ID = 1                         # get node ID
+        self.auto_home = 2                      # auto home all axis
+        self.find_end_points = 3                # find end points of all axis
+        self.move_to_target = 4                 # move to target azimuth and inclination
+        self.auto_zero = 5                      # auto zero, set position to 0 degrees azimuth, 0 degrees inclination, as per on board accelerometer
+        self.store_target_location = 6          # store current azimuth and inclination values as location of target
+        self.sun_location = 7                   # azimuth and inclination location of sun, relative to target
     #end def
     
 #end class

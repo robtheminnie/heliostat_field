@@ -34,7 +34,12 @@ def run_instructions(instruction, data):
         # auto zero x,y axis to get mirror horizontal, allows for pan axis inclination determination
         # auto home both axis
         pan_tilt_mechanism.auto_zero()
-    
+        
+    elif instruciton == instruction_ID.store_target_location:
+      print("storing target location")
+      
+    elif instruciton == instruction_ID.sun_location:
+      print("new sun location received")
     
   #end if
   
