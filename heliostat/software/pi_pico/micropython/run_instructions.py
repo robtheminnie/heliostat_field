@@ -1,5 +1,5 @@
 
-from enumerations
+import enumerations
 import uart
 import pan_tilt_mechanism
 
