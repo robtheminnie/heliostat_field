@@ -40,6 +40,9 @@ def run_instructions(instruction, data):
       
     elif instruciton == instruction_ID.sun_location:
       print("new sun location received")
+      
+    elif instruction == instrudction_ID.calibrate_actuation:
+      print("calibrating actuators")
     
   #end if
   
