@@ -10,6 +10,7 @@ class instruction_ID:
         self.auto_zero = 5                      # auto zero, set position to 0 degrees azimuth, 0 degrees inclination, as per on board accelerometer
         self.store_target_location = 6          # store current azimuth and inclination values as location of target
         self.sun_location = 7                   # azimuth and inclination location of sun, relative to target
+        self.calibrate_actuation = 8            # calibrate relationship between actuator steps and accelerometer movement
     #end def
     
 #end class
