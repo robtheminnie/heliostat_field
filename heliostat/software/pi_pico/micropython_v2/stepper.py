@@ -59,19 +59,7 @@ class stepper:
         # set current state to 0
         self.set_state_0()
     # end def
-    
-    
-    def angle_to_steps(self, angle):
-        # convert degrees to steps
-        return round(angle / 360 * self.steps_per_rotation, 0)
-    #end def
-    
-    
-    def steps_to_angle(self, steps):
-        # convert steps to degrees
-        return (steps * 360 / self.steps_per_rotation)
-    #end def
-    
+  
         
 # states:
     # 0, A
@@ -225,39 +213,5 @@ class stepper:
     def check_max_stop(self):
         return self.max_stop.value()
     # end def
-                    
         
-    def auto_home(self):
-        # home to zero position
-        
-        # first move quick to min end stop
-        result = step_state.step_successful
-        while result != step_state.min_stop_hit:
-            # step backward towards start end stop until end stop hit
-            self.step_backward()
-            
-            # pause briefly
-            utime.sleep(0.01)
-        # end while
-        
-        # end stop hit, set actual to 0
-        self.actual_step_position = 0
-        self.actual_angle_position = 0
-        
-        # move forward away from end stop
-        self.move_to_target_angle(5)
-        
-        # move towards end stop slowly
-        result = step_state.step_successful
-        while result != step_state.min_stop_hit:
-            # step backward towards start end stop until end stop hit
-            result = self.step_backward()
-            
-            # pause briefly
-            utime.sleep(0.1)
-        # end while
-        
-        # hit end stop, set zero position
-        self.actual = 0
-    # end def
         
