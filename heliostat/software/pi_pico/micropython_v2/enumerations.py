@@ -13,12 +13,12 @@ class pin_assignments:
 
 
     # pan actuation
-    self.pan_coil_A = 11
-    self.pan_coil_B = 12
-    self.pan_coil_C = 13
-    self.pan_coil_D = 14
-    self.pan_min_stop = 15
-    self.pan_max_stop = 16
+    self.spin_coil_A = 11
+    self.spin_coil_B = 12
+    self.spin_coil_C = 13
+    self.spin_coil_D = 14
+    self.spin_min_stop = 15
+    self.spin_max_stop = 16
 
 
     #tilt actuation
