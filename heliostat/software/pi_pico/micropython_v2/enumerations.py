@@ -1,17 +1,7 @@
 # class to enumerate pin assignments
 class pin_assignments:
   def __init__(self):
-    # uart to master, uart 0
-    self.uart_from_master_port = 0
-    self.uart_from_master_TX = 0
-    self.uart_from_master_RX = 1
-
-    # uart to slaves, uart 1
-    self.uart_to_slaves_port = 1
-    self.uart_to_slaves_TX = 4
-    self.uart_to_slaves_RX = 5
-
-
+    
     # pan actuation
     self.spin_coil_A = 11
     self.spin_coil_B = 12
@@ -29,11 +19,11 @@ class pin_assignments:
     self.tilt_min_stop = 21
     self.tilt_max_stop = 22
     
-    
-    # i2c port for imu, i2c 0
-    self.imu_i2c_port = 1
-    self.imu_sda = 6
-    self.imu_sdl = 7
+    # ldr inputs
+    self.tilt_up_ldr = 23
+    self.tilt_down_ldr = 24
+    self.spin_up_ldr = 25
+    self.spin_down_ldr = 26
     
   #end def
 #end class
