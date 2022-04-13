@@ -1,5 +1,5 @@
 
-from enumerations
+import enumerations
 import uart
 import pan_tilt_mechanism
 
@@ -40,6 +40,9 @@ def run_instructions(instruction, data):
       
     elif instruciton == instruction_ID.sun_location:
       print("new sun location received")
+      
+    elif instruction == instrudction_ID.calibrate_actuation:
+      print("calibrating actuators")
     
   #end if
   
